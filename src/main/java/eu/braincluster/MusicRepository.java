@@ -14,34 +14,43 @@ public class MusicRepository
         {
             var tracks = new ArrayList<TrackQuery>();
 
-            Connection conn = DriverManager.getConnection(URL);
-            Statement stmt = conn.createStatement();
-
-            ResultSet rs = stmt.executeQuery("""
-                    SELECT t.trackid,
-                           t.trackname,
-                           t.album,
-                           t.milliseconds,
-                           t.bytes,
-                           t.unitprice,
-                           a.name as artistname
-                      FROM tracks t
-                      JOIN artists a ON t.artistid = a.artistid 
-                      ORDER BY t.trackid""");
-
-            while (rs.next())
+            try (Connection conn = DriverManager.getConnection(URL))
             {
-                int trackId = rs.getInt("trackid");
-                String trackName = rs.getString("trackname");
-                String album = rs.getString("album");
-                int milliseconds = rs.getInt("milliseconds");
-                byte bytes = rs.getByte("bytes");
-                double unitPrice = rs.getDouble("unitprice");
-                String artistName = rs.getString("artistname");
+                Statement stmt = conn.createStatement();
 
-                var trackQuery = new TrackQuery(trackId, trackName, album, milliseconds, bytes, unitPrice, artistName);
+                ResultSet rs = stmt.executeQuery("""
+                        
+                                SELECT t.trackid,
+                                   t.trackname,
+                                   t.album,
+                                   t.milliseconds,
+                                   t.bytes,
+                                   t.unitprice,
+                                   a.name as artistname
+                              FROM tracks t
+                              JOIN artists a ON t.artistid = a.artistid 
+                              ORDER BY t.
+                        
+                        trackid""");
 
-                tracks.add(trackQuery);
+                while (rs.
+                        next())
+                {
+                    int trackId = rs.getInt("trackid");
+                    String trackName = rs.getString("trackname");
+                    String album = rs.getString("album");
+                    int milliseconds = rs.getInt("milliseconds");
+                    byte bytes = rs.getByte("bytes");
+                    double unitPrice = rs.
+
+                            getDouble("unitprice");
+                    String artistName = rs.getString("artistname");
+
+                    var trackQuery = new TrackQuery(
+                            trackId, trackName, album, milliseconds, bytes, unitPrice, artistName);
+
+                    tracks.add(trackQuery);
+                }
             }
 
             return tracks;
@@ -57,35 +66,67 @@ public class MusicRepository
     {
         try
         {
-            Connection conn = DriverManager.getConnection(URL);
-            Statement stmt = conn.createStatement();
+            Track track;
 
-            ResultSet rs = stmt.executeQuery("""
-                        SELECT *
-                          FROM Tracks
-                         WHERE milliseconds =
-                               (SELECT max(milliseconds)
-                                  FROM Tracks)
-                          ORDER by trackid
-                          LIMIT 1
-                    """);
+            try (Connection conn = DriverManager.getConnection(URL))
+            {
+                Statement stmt = conn.createStatement();
 
-            rs.next();
+                ResultSet rs = stmt.executeQuery("""
+                            SELECT *
+                              FROM Tracks
+                             WHERE milliseconds =
+                                   (SELECT max(milliseconds)
+                                      FROM Tracks)
+                              ORDER by trackid
+                              LIMIT 1
+                        """);
 
-            int trackId = rs.getInt("trackid");
-            String trackName = rs.getString("trackname");
-            String album = rs.getString("album");
-            int milliseconds = rs.getInt("milliseconds");
-            byte bytes = rs.getByte("bytes");
-            double unitPrice = rs.getDouble("unitprice");
-            int artistId = rs.getInt("artistid");
+                rs.next();
 
-            return new Track(trackId, trackName, album, milliseconds, bytes, unitPrice, artistId);
+                int trackId = rs.getInt("trackid");
+                String trackName = rs.getString("trackname");
+                String album = rs.getString("album");
+                int milliseconds = rs.getInt("milliseconds");
+                byte bytes = rs.getByte("bytes");
+                double unitPrice = rs.getDouble("unitprice");
+                int artistId = rs.getInt("artistid");
+
+                track = new Track(trackId, trackName, album, milliseconds, bytes, unitPrice, artistId);
+            }
+
+            return track;
         }
         catch (SQLException e)
         {
             System.out.println("Database connection error: " + e.getMessage());
             return null;
+        }
+    }
+
+    public int getRocks()
+    {
+        try
+        {
+            try (Connection conn = DriverManager.getConnection(URL))
+            {
+                Statement stmt = conn.createStatement();
+
+                ResultSet rs = stmt.executeQuery("""
+                                    SELECT count(*) AS rock_count
+                                      FROM Tracks
+                                     WHERE trackname like '%rock%';
+                        """);
+
+                rs.next();
+
+                return rs.getInt("rock_count");
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Database connection error: " + e.getMessage());
+            return 0;
         }
     }
 }

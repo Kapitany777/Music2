@@ -14,5 +14,6 @@ public class Main
         }*/
 
         System.out.println(repo.getLongest());
+        System.out.println(repo.getRocks());
     }
 }
