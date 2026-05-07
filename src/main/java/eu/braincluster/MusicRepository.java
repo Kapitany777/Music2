@@ -18,18 +18,18 @@ public class MusicRepository
             Statement stmt = conn.createStatement();
 
             ResultSet rs = stmt.executeQuery("""
-                SELECT t.trackid,
-                       t.trackname,
-                       t.album,
-                       t.milliseconds,
-                       t.bytes,
-                       t.unitprice,
-                       a.name as artistname
-                  FROM tracks t
-                  JOIN artists a ON t.artistid = a.artistid 
-                  ORDER BY t.trackid""");
+                    SELECT t.trackid,
+                           t.trackname,
+                           t.album,
+                           t.milliseconds,
+                           t.bytes,
+                           t.unitprice,
+                           a.name as artistname
+                      FROM tracks t
+                      JOIN artists a ON t.artistid = a.artistid 
+                      ORDER BY t.trackid""");
 
-            while(rs.next())
+            while (rs.next())
             {
                 int trackId = rs.getInt("trackid");
                 String trackName = rs.getString("trackname");
@@ -48,9 +48,44 @@ public class MusicRepository
         }
         catch (SQLException e)
         {
-            System.out.println("Database connection error: "  + e.getMessage());
+            System.out.println("Database connection error: " + e.getMessage());
             return null;
         }
+    }
 
+    public Track getLongest()
+    {
+        try
+        {
+            Connection conn = DriverManager.getConnection(URL);
+            Statement stmt = conn.createStatement();
+
+            ResultSet rs = stmt.executeQuery("""
+                        SELECT *
+                          FROM Tracks
+                         WHERE milliseconds =
+                               (SELECT max(milliseconds)
+                                  FROM Tracks)
+                          ORDER by trackid
+                          LIMIT 1
+                    """);
+
+            rs.next();
+
+            int trackId = rs.getInt("trackid");
+            String trackName = rs.getString("trackname");
+            String album = rs.getString("album");
+            int milliseconds = rs.getInt("milliseconds");
+            byte bytes = rs.getByte("bytes");
+            double unitPrice = rs.getDouble("unitprice");
+            int artistId = rs.getInt("artistid");
+
+            return new Track(trackId, trackName, album, milliseconds, bytes, unitPrice, artistId);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Database connection error: " + e.getMessage());
+            return null;
+        }
     }
 }
