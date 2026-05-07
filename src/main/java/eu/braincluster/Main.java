@@ -16,7 +16,10 @@ public class Main
         System.out.println(repo.getLongest());
         System.out.println(repo.getRocks());
 
-        // boolean success = repo.addTrack(new Track(0, "Sálálá", "Teszt", 100000, 10000000, 0.99, 1));
-        // System.out.println(success);
+        // boolean success1 = repo.addTrack(new Track(0, "Sálálá", "Teszt", 100000, 10000000, 0.99, 1));
+        // System.out.println(success1);
+
+        boolean success2 = repo.updateTrack(3504, 2.5);
+        System.out.println(success2);
     }
 }

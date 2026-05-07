@@ -39,10 +39,8 @@ public class MusicRepository
                     String trackName = rs.getString("trackname");
                     String album = rs.getString("album");
                     int milliseconds = rs.getInt("milliseconds");
-                    byte bytes = rs.getByte("bytes");
-                    double unitPrice = rs.
-
-                            getDouble("unitprice");
+                    int bytes = rs.getInt("bytes");
+                    double unitPrice = rs.getDouble("unitprice");
                     String artistName = rs.getString("artistname");
 
                     var trackQuery = new TrackQuery(
@@ -145,6 +143,30 @@ public class MusicRepository
             statement.setDouble(4, track.getBytes());
             statement.setDouble(5, track.getUnitPrice());
             statement.setInt(6, track.getArtistId());
+
+            int rows = statement.executeUpdate();
+
+            return rows == 1;
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Database connection error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updateTrack(int trackId, double newPrice)
+    {
+        String sql = """
+                UPDATE tracks SET unitprice = ?
+                 WHERE trackid = ?;
+                """;
+
+        try (Connection conn = DriverManager.getConnection(URL);
+             PreparedStatement statement = conn.prepareStatement(sql))
+        {
+            statement.setDouble(1, newPrice);
+            statement.setInt(2, trackId);
 
             int rows = statement.executeUpdate();
 
