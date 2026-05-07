@@ -8,9 +8,9 @@ public class Main
 
         var tracks = repo.getAll();
 
-        for (var track : tracks)
+        /* for (var track : tracks)
         {
             System.out.println(track);
-        }
+        }*/
     }
 }

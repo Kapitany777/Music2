@@ -31,15 +31,15 @@ public class MusicRepository
 
             while(rs.next())
             {
-                int trackid = rs.getInt("trackid");
-                String trackname = rs.getString("trackname");
+                int trackId = rs.getInt("trackid");
+                String trackName = rs.getString("trackname");
                 String album = rs.getString("album");
                 int milliseconds = rs.getInt("milliseconds");
                 byte bytes = rs.getByte("bytes");
-                double unitprice = rs.getDouble("unitprice");
-                String artistname = rs.getString("artistname");
+                double unitPrice = rs.getDouble("unitprice");
+                String artistName = rs.getString("artistname");
 
-                var trackQuery = new TrackQuery(trackid, trackname, album, milliseconds, bytes, unitprice, artistname);
+                var trackQuery = new TrackQuery(trackId, trackName, album, milliseconds, bytes, unitPrice, artistName);
 
                 tracks.add(trackQuery);
             }
