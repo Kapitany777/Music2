@@ -19,7 +19,6 @@ public class MusicRepository
                 Statement stmt = conn.createStatement();
 
                 ResultSet rs = stmt.executeQuery("""
-                        
                                 SELECT t.trackid,
                                    t.trackname,
                                    t.album,
@@ -127,6 +126,34 @@ public class MusicRepository
         {
             System.out.println("Database connection error: " + e.getMessage());
             return 0;
+        }
+    }
+
+    public boolean addTrack(Track track)
+    {
+        String sql = """
+                        INSERT INTO tracks(trackname, album, milliseconds, bytes, unitprice, artistid)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                """;
+
+        try (Connection conn = DriverManager.getConnection(URL);
+             PreparedStatement statement = conn.prepareStatement(sql))
+        {
+            statement.setString(1, track.getTrackName());
+            statement.setString(2, track.getAlbum());
+            statement.setInt(3, track.getMilliseconds());
+            statement.setDouble(4, track.getBytes());
+            statement.setDouble(5, track.getUnitPrice());
+            statement.setInt(6, track.getArtistId());
+
+            int rows = statement.executeUpdate();
+
+            return rows == 1;
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Database connection error: " + e.getMessage());
+            return false;
         }
     }
 }
